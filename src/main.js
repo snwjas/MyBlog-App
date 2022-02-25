@@ -18,6 +18,8 @@ import 'katex/dist/katex.min.css' // latex
 
 import '@/plugin/highlightjs'// highlightjs
 
+import 'vue-cute-timeline/dist/index.css'
+
 // main-content
 Vue.prototype.$getContentTop = function() {
   const $elem = document.getElementById('main-content')
