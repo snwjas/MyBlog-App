@@ -149,3 +149,94 @@ export function randomTagType() {
   const tagType = ['', 'info', 'success', 'warning', 'danger']
   return tagType[Math.floor(Math.random() * tagType.length)]
 }
+
+/**
+ * HTML 转义
+ * @param {String} sHtml
+ * @return {String}
+ */
+export function html2Escape(sHtml) {
+  return sHtml.replace(/[<>&"]/g, function(c) {
+    return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]
+  })
+}
+
+/**
+ * HTML 反转义
+ * @param {String} str
+ * @return {String}
+ */
+export function escape2Html(str) {
+  const arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' }
+  return str.replace(/&(lt|gt|nbsp|amp|quot);/ig, function(all, t) {
+    return arrEntities[t]
+  })
+}
+
+export function tryCopyDomText(element) {
+  if (document.body.createTextRange) {
+    const range = document.body.createTextRange()
+    range.moveToElementText(element)
+    range.select()
+  } else if (window.getSelection) {
+    const selection = window.getSelection()
+    const range = document.createRange()
+    range.selectNodeContents(element)
+    selection.removeAllRanges()
+    selection.addRange(range)
+  } else {
+    console.error('select dom err')
+  }
+  document.execCommand('copy', false, null) // 过去方法
+}
+
+/**
+ * 深拷贝
+ * @param target
+ * @return {{}}
+ */
+export function deepClone(target) {
+  // 定义一个变量
+  let result
+  // 如果当前需要深拷贝的是一个对象的话
+  if (typeof target === 'object') {
+    // 如果是一个数组的话
+    if (Array.isArray(target)) {
+      result = [] // 将result赋值为一个数组，并且执行遍历
+      for (const i in target) {
+        // 递归克隆数组中的每一项
+        result.push(deepClone(target[i]))
+      }
+      // 判断如果当前的值是null的话；直接赋值为null
+    } else if (target === null) {
+      result = null
+      // 判断如果当前的值是一个RegExp对象的话，直接赋值
+    } else if (target.constructor === RegExp) {
+      result = target
+    } else {
+      // 否则是普通对象，直接for in循环，递归赋值对象的所有值
+      result = {}
+      for (const i in target) {
+        result[i] = deepClone(target[i])
+      }
+    }
+    // 如果不是对象的话，就是基本数据类型，那么直接赋值
+  } else {
+    result = target
+  }
+  // 返回最终结果
+  return result
+}
+
+/**
+ * 滚动到元素
+ * @param {String|Element} target
+ */
+export function scrollToElement(target) {
+  const $elem = target && typeof target === 'string'
+    ? target.startsWith('#') ? document.getElementById(target.substring(1, target.length)) : document.querySelector(target)
+    : target
+  if ($elem) {
+    $elem.scrollIntoView({ behavior: 'smooth' })
+  }
+}

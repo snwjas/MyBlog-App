@@ -1,7 +1,7 @@
 <template>
   <div
     :class="['header', isScrollToTop?'show':'hide']"
-    :style="'background-color:' + (scrollNow===0?'rgba(0,0,0,0)':'#545c64')"
+    :style="'background-color:' + (scrollCur===0?'rgba(0,0,0,0)':'#545c64')"
   >
     <el-row type="flex" justify="center">
       <el-col :md="18" :sm="20" :xs="22">
@@ -32,24 +32,22 @@ export default {
   },
   data() {
     return {
-      scroll: this.$scroll,
-      scrollNow: 0,
-      scrollOld: 0
+      scrollLast: 0,
+      scrollCur: 0
     }
   },
   computed: {
-    isScrollToTop() {
-      return this.scrollOld >= this.scrollNow
+    isScrollToTop: function() {
+      return this.scrollLast >= this.scrollCur
     }
   },
-  watch: {
-    scroll: {
-      deep: true,
-      handler: function(val) {
-        this.scrollOld = val.scrollOld
-        this.scrollNow = val.scrollNow
-      }
-    }
+  mounted: function() {
+    this.$nextTick(() => {
+      document.addEventListener('scroll', () => {
+        this.scrollLast = this.scrollCur
+        this.scrollCur = document.documentElement.scrollTop || document.body.scrollTop
+      })
+    })
   },
   methods: {
     openSearch() {

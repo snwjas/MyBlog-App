@@ -11,12 +11,12 @@
     </div>
     <!-- 简介 -->
     <div class="introduction">
-      <p>{{ profile.description }}</p>
+      <p>{{ profile.nickname }}</p>
     </div>
     <!-- 社交 -->
     <div class="social">
       <a v-for="(scl,index) in social" :key="index" target="_blank" :href="scl.link">
-        <el-avatar :src="scl.icon" fit="cover">
+        <el-avatar :src="scl.icon" fit="cover" :title="scl.name">
           {{ scl.name }}
         </el-avatar>
       </a>
@@ -34,19 +34,24 @@ export default {
     return {
       social: [
         {
+          name: 'MyWeb',
+          link: 'https://refrain.xyz',
+          icon: 'https://ico.hnysnet.com/get.php?url=https://refrain.xyz'
+        },
+        {
           name: 'GitHub',
           link: 'https://github.com/snwjas',
-          icon: 'https://ico.mikelin.cn/github.com'
+          icon: 'https://ico.hnysnet.com/get.php?url=https://github.com'
         },
         {
           name: 'Gitee',
           link: 'https://gitee.com/snwjas',
-          icon: 'https://ico.mikelin.cn/gitee.com'
+          icon: 'https://ico.hnysnet.com/get.php?url=https://gitee.com'
         },
         {
           name: 'CSDN',
           link: 'https://blog.csdn.net/u012131025',
-          icon: 'https://ico.mikelin.cn/csdn.net'
+          icon: 'https://ico.hnysnet.com/get.php?url=https://www.csdn.net'
         }
       ]
     }
@@ -78,3 +83,9 @@ export default {
   }
 }
 </style>
+<style lang="scss">
+.el-avatar {
+  background: none;
+}
+</style>
+

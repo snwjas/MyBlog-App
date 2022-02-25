@@ -6,15 +6,15 @@
       </h1>
       <div class="info">
         <div>
-          <i class="el-icon-date" />
+          <i class="el-icon-date" style="margin-right: 5px;" />
           <span>{{ blog.createTime }}</span>
         </div>
         <div>
-          <i class="el-icon-folder" />
+          <i class="el-icon-folder" style="margin-right: 5px;" />
           <span>{{ getCategoryName(blog.category) }}</span>
         </div>
-        <div>
-          <i class="el-icon-collection-tag" />
+        <div v-if="blog.tags && blog.tags.length > 0">
+          <i class="el-icon-collection-tag" style="margin-right: 5px;" />
           <el-tag
             v-for="tag in blog.tags"
             :key="tag.id"
@@ -95,6 +95,7 @@ export default {
 
   .summary {
     margin-top: 1rem;
+    text-align: center;
 
     p {
       font-size: 16px;

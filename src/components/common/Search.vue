@@ -37,6 +37,7 @@ export default {
     search() {
       this.$router.push({ name: 'Search', params: { keyword: this.keyword }})
       this.close()
+      this.$scrollToContent()
     }
   }
 }

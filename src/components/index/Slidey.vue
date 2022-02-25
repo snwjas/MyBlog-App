@@ -1,16 +1,38 @@
 <template>
-  <div class="slidey" :style="{...bgi}">
+  <div
+    class="slidey"
+    :style="{backgroundImage: `url(${bgURL})`, height: isBlogMode ? '50vh': '80vh'}"
+  >
     <div class="mask" />
     <div class="info">
-      <p class="title">{{ attributes.name }}</p>
-      <p class="description">{{ attributes.description }}</p>
-    </div>
-    <div class="control">
-      <div class="pre" @click="preImg">
-        <i class="el-icon-arrow-left" />
+      <div v-if="isBlogMode" class="post">
+        <div class="title">{{ blogData.title }}</div>
+        <div class="description">
+          <div style="margin-right: 20px;">
+            <i class="el-icon-folder" style="margin-right: 5px;" />
+            <span>{{ blogData && blogData.category && blogData.category.name ? blogData.category.name : '未分类' }}</span>
+          </div>
+          <div v-if="blogData.tags && blogData.tags.length > 0">
+            <i class="el-icon-collection-tag" style="margin-right: 5px;" />
+            <el-tag
+              v-for="(tag,index) in blogData.tags"
+              :key="index"
+              size="mini"
+              type="info"
+              style="margin-right: 5px"
+            >
+              {{ tag.name }}
+            </el-tag>
+          </div>
+        </div>
+        <div class="description">
+          <el-avatar :src="profile.avatar" />&nbsp;&nbsp;
+          {{ `${profile.nickname} · 发布于 ${blogData.createTime} · 最后编辑于 ${blogData.updateTime} · ${blogData.visits}次阅读` }}
+        </div>
       </div>
-      <div class="next" @click="nextImg">
-        <i class="el-icon-arrow-right" />
+      <div v-else class="home">
+        <p class="title">{{ attributes.name }}</p>
+        <p class="description">{{ attributes.description }}</p>
       </div>
     </div>
     <div class="toContent" @click="scrollToElem">
@@ -24,62 +46,57 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Slidey',
-  // eslint-disable-next-line vue/require-prop-types
-  props: ['scrollToElemId'],
   data() {
     return {
       slideHeight: 0,
       imgLoop: null,
-      currentBGI: 0,
-      imgNames: [
-        'https://cn.bing.com/th?id=OHR.SnowCraterLake_ZH-CN9218350129_1920x1080.jpg',
-        'https://cn.bing.com/th?id=OHR.FoucaultsPendulum_ZH-CN9435794626_1920x1080.jpg',
-        'https://cn.bing.com/th?id=OHR.SnowCraterLake_ZH-CN9218350129_1920x1080.jpg',
-        'https://cn.bing.com/th?id=OHR.DiamondBeach_ZH-CN3165398805_1920x1080.jpg',
-        'https://cn.bing.com/th?id=OHR.DiamondBeach_ZH-CN3165398805_1920x1080.jpg'
-      ]
+      bgURL: '',
+      blogData: {}
     }
   },
   computed: {
-    bgi() {
-      return { backgroundImage: `url(${this.imgNames[this.currentBGI]})` }
+    isBlogMode() {
+      return this.blogData &&
+        Object.prototype.toString.call(this.blogData) === '[object Object]' &&
+        Object.keys(this.blogData).length > 0
     },
-    ...mapGetters(['attributes'])
+    ...mapGetters(['attributes', 'profile'])
   },
   created() {
     this.setImgLoop()
   },
   methods: {
-    // 切换到上一张图片
-    preImg() {
-      clearInterval(this.imgLoop)
-      if (this.currentBGI > 0) {
-        this.currentBGI -= 1
-      } else {
-        this.currentBGI = this.imgNames.length - 1
-      }
-      this.setImgLoop()
+    getRandomBg() {
+      const lx = ['dongman', 'fengjing']
+      const img_api = `https://api.btstu.cn/sjbz/api.php?method=zsy&lx=${lx[Math.floor(Math.random() * lx.length)]}`
+      return `${img_api}&_t=${new Date().getTime()}`
     },
-    // 切换到下一张图片
-    nextImg() {
-      clearInterval(this.imgLoop)
-      if (this.currentBGI >= this.imgNames.length - 1) {
-        this.currentBGI = 0
-      } else {
-        this.currentBGI += 1
-      }
-      this.setImgLoop()
+    changeBg() {
+      this.bgURL = this.getRandomBg()
     },
     // 设置图片循环播放
     setImgLoop() {
-      this.imgLoop = setInterval(this.nextImg, 7000)
+      this.clearImgLoop()
+      this.changeBg()
+      this.imgLoop = setInterval(this.changeBg, 60000)
+    },
+    clearImgLoop() {
+      if (this.imgLoop) {
+        clearInterval(this.imgLoop)
+      }
     },
     // 滚动到元素（主内容）
     scrollToElem() {
-      window.scrollTo({
-        top: document.getElementById(this.scrollToElemId).offsetTop,
-        behavior: 'smooth'
-      })
+      this.$scrollToContent()
+    },
+    setBlogData(data) { // 博客模式，则显示当前博客信息
+      this.blogData = data
+      if (this.isBlogMode) {
+        this.clearImgLoop()
+        this.bgURL = this.blogData.thumbnail ? this.blogData.thumbnail : this.getRandomBg()
+      } else {
+        this.setImgLoop()
+      }
     }
   }
 }
@@ -88,7 +105,6 @@ export default {
 <style scoped lang="scss">
 .slidey {
   position: relative;
-  height: 80vh;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -106,39 +122,36 @@ export default {
     left: 50%;
     transform: translateX(-50%) translateY(-55%);
     text-align: center;
+    color: white;
 
-    * {
-      color: white;
-      font-weight: 600;
+    .home {
+      .title {
+        font-size: 4.5vw;
+        font-weight: 600;
+      }
+
+      .description {
+        margin-top: 24px;
+        font-size: 1.75vw;
+      }
     }
 
-    .title {
-      font-size: 4.5vw;
+    .post {
+      .title {
+        font-size: 2rem;
+        font-weight: 600;
+      }
+
+      .description {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 18px;
+        font-size: 15px;
+        font-weight: normal;
+      }
     }
 
-    .description {
-      margin-top: 24px;
-      font-size: 1.75vw;
-    }
-  }
-
-  .control {
-    div {
-      position: absolute;
-      top: 45%;
-      cursor: pointer;
-      color: white;
-      font-size: 32px;
-      font-weight: bolder;
-    }
-
-    .pre {
-      left: 20px;
-    }
-
-    .next {
-      right: 20px;
-    }
   }
 
   .toContent {

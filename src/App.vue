@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-header />
-    <v-slidey ref="slidey" :scroll-to-elem-id="'main-content'" />
+    <v-slidey ref="slidey" />
     <div id="main-content">
       <router-view />
     </div>

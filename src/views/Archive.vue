@@ -31,7 +31,7 @@
 
 <script>
 import { Timeline, TimelineItem, TimelineTitle } from 'vue-cute-timeline'
-import { randomColor } from '@/utils'
+import { randomColor, scrollToElement } from '@/utils'
 import { listAchievement } from '@/api/blog'
 
 export default {
@@ -46,25 +46,31 @@ export default {
       year: null,
       archive: {},
       contentTop: window.screenTop,
-      sticky: false
+      sticky: false,
+      scrollEventToBind: [] // 用于取消绑定
     }
   },
-  watch: {
-    $scroll: {
-      deep: true,
-      handler: function(val) {
-        const scrollNow = val.scrollNow
-        this.sticky = scrollNow >= this.contentTop
+  mounted: function() {
+    this.$nextTick(() => {
+      const _this = this
+      function fun() {
+        const scroll = document.documentElement.scrollTop || document.body.scrollTop
+        _this.sticky = scroll >= _this.contentTop
       }
-    }
+      this.scrollEventToBind.push(fun)
+      document.addEventListener('scroll', fun)
+    })
   },
   created() {
     this.listAchievement()
   },
   updated() {
-    this.contentTop = document.getElementById('main-content').offsetTop
-    if (this.$parent.$refs.slidey) {
-      this.$parent.$refs.slidey.scrollToElem()
+    this.contentTop = this.$getContentTop()
+    this.$scrollToContent()
+  },
+  destroyed() {
+    for (const fun of this.scrollEventToBind) {
+      document.removeEventListener('scroll', fun)
     }
   },
   methods: {
@@ -72,13 +78,7 @@ export default {
       return randomColor()
     },
     yearSelect(val) {
-      const elem = document.getElementById(val + '')
-      if (elem) {
-        window.scrollTo({
-          top: elem.offsetTop + document.body.clientHeight - 150,
-          behavior: 'smooth'
-        })
-      }
+      scrollToElement('#' + val)
     },
     listAchievement() {
       listAchievement().then(resp => {
@@ -151,6 +151,7 @@ export default {
   -ms-overflow-style: none;
   overflow: -moz-hidden-unscrollable;
   transition: all .3s;
+
   &::-webkit-scrollbar {
     display: none;
   }

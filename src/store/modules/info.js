@@ -1,4 +1,4 @@
-import { getAttributes, getAboutMe } from '@/api/index'
+import { getAttributes, getAboutMe } from '@/api'
 
 const getDefaultState = () => {
   return {

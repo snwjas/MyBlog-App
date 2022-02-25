@@ -1,8 +1,6 @@
 <template>
   <el-row type="flex" justify="center" class="footer" style="background-color:#545c64">
-    <el-col :md="18" :sm="20" :xs="24">
-      {{ attributes.footer }}
-    </el-col>
+    <el-col :md="18" :sm="20" :xs="24" v-html="attributes.footer" />
   </el-row>
 
 </template>
