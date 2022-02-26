@@ -76,8 +76,6 @@ export default {
     // 不是搜索
     const keyword = this.$route.params.keyword
     if (!keyword) {
-      this.$store.dispatch('info/getAttributes')
-      this.$store.dispatch('info/getProfile')
       this.getBlogList()
     } else {
       this.searchParams.title = keyword

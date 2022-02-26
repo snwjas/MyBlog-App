@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// 获取QQ信息
+// 鑾峰彇QQ淇℃伅
 export function getQQInfo(qqNumber) {
   const api = `https://api.btstu.cn/qqxt/api.php?qq=${qqNumber}`
   return axios.get(api).then(resp => {

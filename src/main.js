@@ -18,7 +18,7 @@ import 'katex/dist/katex.min.css' // latex
 
 import '@/plugin/highlightjs'// highlightjs
 
-import 'vue-cute-timeline/dist/index.css'
+// import 'vue-cute-timeline/dist/index.css'
 
 // main-content
 Vue.prototype.$getContentTop = function() {
@@ -37,10 +37,14 @@ router.beforeEach(async(to, from, next) => {
   NProgress.start()
   // 修改页面title
   document.title = to.meta.title ? `${to.meta.title} | ${blogName}` : blogName
-  if (store.getters.attributes && Object.keys(store.getters.attributes).length === 0) {
+  const hasAttribute = Object.prototype.toString.call(store.getters.attributes) === '[object Object]' &&
+                       Object.keys(store.getters.attributes).length !== 0
+  if (!hasAttribute) {
     await store.dispatch('info/getAttributes')
   }
-  if (store.getters.profile && Object.keys(store.getters.profile).length === 0) {
+  const hasProfile = Object.prototype.toString.call(store.getters.profile) === '[object Object]' &&
+                     Object.keys(store.getters.profile).length !== 0
+  if (!hasProfile) {
     await store.dispatch('info/getProfile')
   }
   next()
