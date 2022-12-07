@@ -1,7 +1,8 @@
 {
   "name": "myblog-app",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "author": "Myles Yang <myles.yang@foxmail.com>",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -12,7 +13,7 @@
     "core-js": "^3.6.5",
     "element-ui": "^2.14.1",
     "highlight.js": "^11.4.0",
-    "katex": "^0.15.2",
+    "katex": "^0.12.0",
     "nprogress": "^0.2.0",
     "vue": "^2.6.11",
     "vue-cute-timeline": "^1.2.8",
@@ -33,9 +34,14 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
-    "node-sass": "^4.12.0",
+    "sass": "^1.26.8",
     "sass-loader": "^8.0.2",
     "script-ext-html-webpack-plugin": "^2.1.5",
     "vue-template-compiler": "^2.6.11"
-  }
+  },
+  "engines": {
+    "node": ">=14.15.0",
+    "npm": ">=6.14.8"
+  },
+  "license": "MIT"
 }
